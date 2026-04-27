@@ -468,7 +468,7 @@ export default function App() {
                   />
 
                   <img
-                    src="https://images.unsplash.com/photo-1600896997793-b8ed3459a17f?w=800"
+                    src="/src/imports/image.png"
                     alt="Ishant Acharya"
                     className="w-full h-full object-cover opacity-70 blur-[2px] scale-105"
                   />
