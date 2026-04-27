@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'motion/react';
 import { Menu, X, Moon, Sun, Mail, Phone, MapPin, Download, ExternalLink, Github, Linkedin, Terminal, Code2, Cpu, Zap } from 'lucide-react';
+import profileImage from '../imports/image.png';
 
 export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -468,7 +469,7 @@ export default function App() {
                   />
 
                   <img
-                    src="/src/imports/image.png"
+                    src={profileImage}
                     alt="Ishant Acharya"
                     className="w-full h-full object-cover opacity-70 blur-[2px] scale-105"
                   />
