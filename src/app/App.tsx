@@ -1,13 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'motion/react';
-import { Menu, X, Moon, Sun, Mail, Phone, MapPin, Download, ExternalLink, Github, Linkedin, Terminal, Code2, Cpu, Zap } from 'lucide-react';
+import { Menu, X, Moon, Sun, Mail, Phone, MapPin, Download, ExternalLink, Github, Linkedin, Terminal, Code2, Cpu, Zap, Play, Pause, Volume2 } from 'lucide-react';
 import profileImage from '../imports/image.png';
+import audioTrack from '../imports/Zenitsu______zenitsuxmagar____TikTok_-_Brave_2026-05-09_19-23-41.mp3';
 
 export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const { scrollYProgress } = useScroll();
   const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
   const cursorX = useMotionValue(0);
@@ -43,6 +46,17 @@ export default function App() {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
       setIsMobileMenuOpen(false);
+    }
+  };
+
+  const toggleAudio = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
     }
   };
 
@@ -1013,6 +1027,118 @@ export default function App() {
           </div>
         </div>
       </section>
+
+      {/* Floating Audio Player */}
+      <motion.div
+        initial={{ opacity: 0, y: 100 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.5, duration: 0.8 }}
+        className="fixed bottom-8 right-8 z-50"
+      >
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          className="relative group"
+        >
+          {/* Glow Effect */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary to-purple-600 rounded-2xl opacity-50 blur-xl group-hover:opacity-75 transition-opacity" />
+
+          {/* Player Container */}
+          <div className="relative bg-card/90 backdrop-blur-xl border-2 border-primary/50 rounded-2xl p-4 shadow-2xl overflow-hidden">
+            {/* Tech Grid Background */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="w-full h-full" style={{
+                backgroundImage: 'linear-gradient(rgba(108, 99, 255, 0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(108, 99, 255, 0.5) 1px, transparent 1px)',
+                backgroundSize: '10px 10px'
+              }} />
+            </div>
+
+            {/* Corner Brackets */}
+            <div className="absolute top-1 left-1 w-4 h-4 border-t-2 border-l-2 border-primary" />
+            <div className="absolute top-1 right-1 w-4 h-4 border-t-2 border-r-2 border-primary" />
+            <div className="absolute bottom-1 left-1 w-4 h-4 border-b-2 border-l-2 border-primary" />
+            <div className="absolute bottom-1 right-1 w-4 h-4 border-b-2 border-r-2 border-primary" />
+
+            <div className="relative flex items-center gap-4">
+              {/* Visualizer */}
+              <div className="flex items-center gap-1">
+                {[...Array(4)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className="w-1 bg-primary rounded-full"
+                    animate={isPlaying ? {
+                      height: [8, 24, 12, 28, 16],
+                    } : { height: 8 }}
+                    transition={{
+                      duration: 0.8,
+                      repeat: Infinity,
+                      delay: i * 0.1,
+                    }}
+                  />
+                ))}
+              </div>
+
+              {/* Play/Pause Button */}
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={toggleAudio}
+                className="w-12 h-12 rounded-xl bg-primary hover:bg-primary/80 flex items-center justify-center transition-colors relative overflow-hidden group"
+              >
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-br from-purple-600 to-primary"
+                  initial={{ x: '-100%' }}
+                  whileHover={{ x: 0 }}
+                  transition={{ duration: 0.3 }}
+                />
+                <motion.div
+                  animate={{ rotate: isPlaying ? 0 : 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="relative z-10"
+                >
+                  {isPlaying ? (
+                    <Pause className="w-5 h-5 text-primary-foreground fill-current" />
+                  ) : (
+                    <Play className="w-5 h-5 text-primary-foreground fill-current ml-0.5" />
+                  )}
+                </motion.div>
+              </motion.button>
+
+              {/* Volume Icon */}
+              <motion.div
+                animate={{ scale: isPlaying ? [1, 1.2, 1] : 1 }}
+                transition={{ duration: 0.5, repeat: isPlaying ? Infinity : 0, repeatDelay: 0.5 }}
+              >
+                <Volume2 className="w-5 h-5 text-primary" />
+              </motion.div>
+
+              {/* Status Indicator */}
+              <div className="flex flex-col">
+                <span className="text-xs font-mono text-primary">AUDIO</span>
+                <div className="flex items-center gap-1">
+                  <motion.div
+                    className="w-1.5 h-1.5 rounded-full bg-green-400"
+                    animate={{ opacity: isPlaying ? [1, 0.3, 1] : 0.3 }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  />
+                  <span className="text-xs font-mono text-muted-foreground">
+                    {isPlaying ? 'PLAYING' : 'PAUSED'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Scan Line */}
+            <motion.div
+              className="absolute inset-x-0 h-8 bg-gradient-to-b from-transparent via-primary/20 to-transparent"
+              animate={{ y: ['-100%', '200%'] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+            />
+          </div>
+        </motion.div>
+      </motion.div>
+
+      {/* Hidden Audio Element */}
+      <audio ref={audioRef} src={audioTrack} loop />
 
       {/* Footer */}
       <footer className="py-8 border-t border-border relative overflow-hidden">
